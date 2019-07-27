@@ -59,16 +59,25 @@ public class CampanhaService {
 		campanhaAlterada.setIdTimeCoracao(campanhaDto.getIdTimeCoracao());
 		return campanhaRepository.save(campanhaAlterada);
 	}
-	
-	public void reoganizaVigencia(CampanhaDto novaCampanha) {
-		//List<Campanha> campanhasCadastradas = campanhaRepository.findAll();
-		//List<Campanha> campanhasVigenciaConfl = campanhasCadastradas.stream().filter(c ->  novaCampanha.getInicioVigencia() == c.getInicioVigencia()).filter(c ->  novaCampanha.getFimVigencia(). >= c.getFimVigencia().get(Calendar.DAY_OF_YEAR)).collect(Collectors.toList());
 
-		Campanha campanha = campanhaRepository.findTop1ByFimVigenciaLessThanEqualOrderByDataCriacaoDesc(novaCampanha.getFimVigencia());
-		if(campanha != null)
-			System.out.println(campanha.getIdCampanha());
-		
-		//List<Campanha> cp = campanhas.stream().filter(c ->  novaCampanha.getInicioVigencia() == c.getInicioVigencia()).filter(c ->  novaCampanha.getFimVigencia().get(Calendar.DAY_OF_YEAR) >= c.getFimVigencia().get(Calendar.DAY_OF_YEAR)).collect(Collectors.toList());
+	public void reoganizaVigencia(CampanhaDto novaCampanha) {
+
+		Campanha campanha = campanhaRepository
+				.findTop1ByFimVigenciaLessThanEqualOrderByDataCriacaoDesc(novaCampanha.getFimVigencia());
+		if (campanha != null) {
+			System.out.println("ultima campanha adicionada que impacta com a nova" + campanha.getIdCampanha());
+
+			campanha = campanhaRepository
+					.findTop1ByFimVigenciaLessThanEqualAndIdCampanhaNotInOrderByDataCriacaoDesc(campanha.getFimVigencia(),campanha.getIdCampanha());
+
+			if (campanha != null)
+				System.out.println(
+						"ultima campanha adicionada que impacta ja adiconada na base" + campanha.getIdCampanha());
+		}
+		// List<Campanha> cp = campanhas.stream().filter(c ->
+		// novaCampanha.getInicioVigencia() == c.getInicioVigencia()).filter(c ->
+		// novaCampanha.getFimVigencia().get(Calendar.DAY_OF_YEAR) >=
+		// c.getFimVigencia().get(Calendar.DAY_OF_YEAR)).collect(Collectors.toList());
 	}
 
 }

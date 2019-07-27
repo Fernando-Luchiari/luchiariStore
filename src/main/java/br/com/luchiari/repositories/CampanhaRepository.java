@@ -14,5 +14,8 @@ public interface CampanhaRepository extends JpaRepository<Campanha, Long> {
 	List<Campanha> findAllByIdTimeCoracao(long idTime);
 	
 	
-	Campanha findTop1ByFimVigenciaLessThanEqualOrderByDataCriacaoDesc(Date fimVigencia);  
+	Campanha findTop1ByFimVigenciaLessThanEqualOrderByDataCriacaoDesc(Date fimVigencia);
+	
+	Campanha findTop1ByFimVigenciaLessThanEqualAndIdCampanhaNotInOrderByDataCriacaoDesc(Date fimVigencia,long idCampanha);
+	 
 }
