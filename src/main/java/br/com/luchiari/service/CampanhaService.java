@@ -1,5 +1,7 @@
 package br.com.luchiari.service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -15,29 +17,42 @@ public class CampanhaService {
 	@Autowired
 	private CampanhaRepository campanhaRepository;
 
-	public Campanha salvar(CampanhaDto campanhaDto) {
+	public CampanhaDto salvar(CampanhaDto campanhaDto) {
 
 		Campanha campanha = new Campanha();
 
 		campanha.setNomeCampanha(campanhaDto.getNomeCampanha());
-		campanha.setInicioVigencia(campanhaDto.getInicioVigencia());
-		campanha.setFimVigencia(campanhaDto.getFimVigencia());
+
+		campanha.setInicioVigencia(campanhaDto.converteInicioVigencia());
+		campanha.setFimVigencia(campanhaDto.converteFimVigencia());
 		campanha.setIdTimeCoracao(campanhaDto.getIdTimeCoracao());
 		campanha.setDataCriacao(new Date());
-		return campanhaRepository.save(campanha);
+		reorganizaVigencia(campanhaDto);
+		campanhaRepository.save(campanha);
+		return campanhaDto;
 	}
 
-	public List<Campanha> listarCampanhas() {
-		return campanhaRepository.findAll();
+	public List<CampanhaDto> listarCampanhas() {
+		List<CampanhaDto> responseCampanha = new ArrayList<CampanhaDto>();
+		campanhaRepository.findAllByFimVigenciaGreaterThanEqual(new Date())
+				.forEach(campanha -> responseCampanha.add(new CampanhaDto(campanha.getNomeCampanha(),
+						campanha.getIdTimeCoracao(), campanha.getInicioVigencia(), campanha.getFimVigencia())));
+		return responseCampanha;
+
 	}
 
-	public Campanha buscar(long id) throws Exception {
-		Campanha campanha = campanhaRepository.findById(id).get();
-
-		if (campanha == null) {
+	public CampanhaDto buscar(long id) throws Exception {
+		Campanha campanha = campanhaRepository.findById(id).isEmpty() ? null : campanhaRepository.findById(id).get();
+		CampanhaDto campanhaDto = null;
+		if (campanha != null) {
+			campanhaDto = new CampanhaDto(campanhaRepository.findById(id).get().getNomeCampanha(),
+					campanhaRepository.findById(id).get().getIdTimeCoracao(),
+					campanhaRepository.findById(id).get().getInicioVigencia(),
+					campanhaRepository.findById(id).get().getFimVigencia());
+		} else if (campanhaDto == null) {
 			throw new Exception("Não existe esta campanha cadastrada");
 		}
-		return campanha;
+		return campanhaDto;
 	}
 
 	public List<Campanha> buscarPorIdTimeCoracao(long idTime) {
@@ -45,39 +60,58 @@ public class CampanhaService {
 		return campanhas;
 	}
 
-	public List<Campanha> apagarCampanha(long idCampanha) {
+	public List<CampanhaDto> apagarCampanha(long idCampanha) {
 		campanhaRepository.deleteById(idCampanha);
-		return campanhaRepository.findAll();
+
+		List<CampanhaDto> responseCampanha = new ArrayList<CampanhaDto>();
+		campanhaRepository.findAllByFimVigenciaGreaterThanEqual(new Date())
+				.forEach(campanha -> responseCampanha.add(new CampanhaDto(campanha.getNomeCampanha(),
+						campanha.getIdTimeCoracao(), campanha.getInicioVigencia(), campanha.getFimVigencia())));
+		return responseCampanha;
 	}
 
-	public Campanha alterar(CampanhaDto campanhaDto, long idCampanha) {
-		Campanha campanhaAlterada = campanhaRepository.findById(idCampanha).get();
+	public CampanhaDto alterar(CampanhaDto campanhaDto, long idCampanha) {
+		Campanha campanhaAlterada = campanhaRepository.findById(idCampanha).isEmpty() ? null
+				: campanhaRepository.findById(idCampanha).get();
 
-		campanhaAlterada.setNomeCampanha(campanhaDto.getNomeCampanha());
-		campanhaAlterada.setInicioVigencia(campanhaDto.getInicioVigencia());
-		campanhaAlterada.setFimVigencia(campanhaDto.getFimVigencia());
-		campanhaAlterada.setIdTimeCoracao(campanhaDto.getIdTimeCoracao());
-		return campanhaRepository.save(campanhaAlterada);
-	}
-
-	public void reoganizaVigencia(CampanhaDto novaCampanha) {
-
-		Campanha campanha = campanhaRepository
-				.findTop1ByFimVigenciaLessThanEqualOrderByDataCriacaoDesc(novaCampanha.getFimVigencia());
-		if (campanha != null) {
-			System.out.println("ultima campanha adicionada que impacta com a nova" + campanha.getIdCampanha());
-
-			campanha = campanhaRepository
-					.findTop1ByFimVigenciaLessThanEqualAndIdCampanhaNotInOrderByDataCriacaoDesc(campanha.getFimVigencia(),campanha.getIdCampanha());
-
-			if (campanha != null)
-				System.out.println(
-						"ultima campanha adicionada que impacta ja adiconada na base" + campanha.getIdCampanha());
+		if (campanhaAlterada != null) {
+			campanhaAlterada.setNomeCampanha(campanhaDto.getNomeCampanha());
+			campanhaAlterada.setInicioVigencia(campanhaDto.converteInicioVigencia());
+			campanhaAlterada.setFimVigencia(campanhaDto.converteFimVigencia());
+			campanhaAlterada.setIdTimeCoracao(campanhaDto.getIdTimeCoracao());
+			campanhaRepository.save(campanhaAlterada);
+			return campanhaDto;
 		}
-		// List<Campanha> cp = campanhas.stream().filter(c ->
-		// novaCampanha.getInicioVigencia() == c.getInicioVigencia()).filter(c ->
-		// novaCampanha.getFimVigencia().get(Calendar.DAY_OF_YEAR) >=
-		// c.getFimVigencia().get(Calendar.DAY_OF_YEAR)).collect(Collectors.toList());
+		return null;
 	}
 
+	public void reorganizaVigencia(CampanhaDto novaCampanha) {
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(novaCampanha.converteFimVigencia());
+		c.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + 1);
+		
+		Campanha campanha = campanhaRepository
+				.findTop1ByFimVigenciaLessThanEqualOrderByDataCriacaoDesc(novaCampanha.converteFimVigencia());
+		if (campanha != null) {
+			campanha.setFimVigencia(c.getTime());
+			reordenaCampanhasAntigas(campanha);
+			campanhaRepository.save(campanha);
+		}		
+	}
+	
+	public void reordenaCampanhasAntigas(Campanha campanha) {
+		Campanha oldestCampanha = campanhaRepository
+				.findTop1ByFimVigenciaLessThanEqualAndIdCampanhaNotInAndDataCriacaoLessThanEqualOrderByDataCriacaoDesc(
+						campanha.getFimVigencia(), campanha.getIdCampanha(), campanha.getDataCriacao());
+		if (oldestCampanha != null) {
+			Calendar c = Calendar.getInstance();
+			c.setTime(campanha.getFimVigencia());
+			c.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + 1);
+			oldestCampanha.setFimVigencia(c.getTime());
+			reordenaCampanhasAntigas(oldestCampanha);
+		}else {
+			return;
+		}
+	}
 }
