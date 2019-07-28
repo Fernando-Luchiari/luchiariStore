@@ -18,11 +18,8 @@ public class CampanhaService {
 	private CampanhaRepository campanhaRepository;
 
 	public CampanhaDto salvar(CampanhaDto campanhaDto) {
-
 		Campanha campanha = new Campanha();
-
 		campanha.setNomeCampanha(campanhaDto.getNomeCampanha());
-
 		campanha.setInicioVigencia(campanhaDto.converteInicioVigencia());
 		campanha.setFimVigencia(campanhaDto.converteFimVigencia());
 		campanha.setIdTimeCoracao(campanhaDto.getIdTimeCoracao());
@@ -49,8 +46,6 @@ public class CampanhaService {
 					campanhaRepository.findById(id).get().getIdTimeCoracao(),
 					campanhaRepository.findById(id).get().getInicioVigencia(),
 					campanhaRepository.findById(id).get().getFimVigencia());
-		} else if (campanhaDto == null) {
-			throw new Exception("Não existe esta campanha cadastrada");
 		}
 		return campanhaDto;
 	}
@@ -61,8 +56,11 @@ public class CampanhaService {
 	}
 
 	public List<CampanhaDto> apagarCampanha(long idCampanha) {
-		campanhaRepository.deleteById(idCampanha);
-
+		try {
+			campanhaRepository.deleteById(idCampanha);
+		} catch (Exception e) {
+			return null;
+		}
 		List<CampanhaDto> responseCampanha = new ArrayList<CampanhaDto>();
 		campanhaRepository.findAllByFimVigenciaGreaterThanEqual(new Date())
 				.forEach(campanha -> responseCampanha.add(new CampanhaDto(campanha.getNomeCampanha(),
@@ -86,20 +84,20 @@ public class CampanhaService {
 	}
 
 	public void reorganizaVigencia(CampanhaDto novaCampanha) {
-		
+
 		Calendar c = Calendar.getInstance();
 		c.setTime(novaCampanha.converteFimVigencia());
 		c.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + 1);
-		
+
 		Campanha campanha = campanhaRepository
 				.findTop1ByFimVigenciaLessThanEqualOrderByDataCriacaoDesc(novaCampanha.converteFimVigencia());
 		if (campanha != null) {
 			campanha.setFimVigencia(c.getTime());
 			reordenaCampanhasAntigas(campanha);
 			campanhaRepository.save(campanha);
-		}		
+		}
 	}
-	
+
 	public void reordenaCampanhasAntigas(Campanha campanha) {
 		Campanha oldestCampanha = campanhaRepository
 				.findTop1ByFimVigenciaLessThanEqualAndIdCampanhaNotInAndDataCriacaoLessThanEqualOrderByDataCriacaoDesc(
@@ -110,7 +108,7 @@ public class CampanhaService {
 			c.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + 1);
 			oldestCampanha.setFimVigencia(c.getTime());
 			reordenaCampanhasAntigas(oldestCampanha);
-		}else {
+		} else {
 			return;
 		}
 	}

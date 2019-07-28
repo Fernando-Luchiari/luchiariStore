@@ -52,9 +52,6 @@ public class CampanhasController {
 			BindingResult result) {
 
 		Response<CampanhaDto> response = new Response<CampanhaDto>();
-		
-		//campanhaService.reoganizaVigencia(campanhaDto);
-
 		if (result.hasErrors()) {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
@@ -78,6 +75,11 @@ public class CampanhasController {
 		Response<List<CampanhaDto>> response = new Response<List<CampanhaDto>>();
 		List<CampanhaDto> campanhas = campanhaService.apagarCampanha(idCampanha);
 
+		if(campanhas == null) {
+			response.getErrors().add("Nenhuma campanha com esse id foi encontrada");
+			return ResponseEntity.badRequest().body(response);
+		}
+		
 		response.setData(campanhas);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 
@@ -102,7 +104,7 @@ public class CampanhasController {
 
 		CampanhaDto novaCampanha = campanhaService.alterar(campanhaDto, idCampanha);
 		if(novaCampanha == null) {
-			response.getErrors().add("Campanha não encontrada");
+			response.getErrors().add("Nenhuma campanha com esse id foi encontrada");
 			return ResponseEntity.badRequest().body(response);
 		}		
 		response.setData(novaCampanha);

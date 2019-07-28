@@ -1,17 +1,48 @@
 package br.com.luchiari.model;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.springframework.stereotype.Component;
+
+@Entity
+@Component
+@Table(name = "socioTorcedor")
 public class SocioTorcedor {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idSocio;
-	private String Nome;
-	private String Sobrenome;
-	private Calendar dataNascimento;
-	private int idTimeCoracao;
+	
+	@Column(name = "nomeCompleto_torcedor", nullable = false)
+	private String nomeCompleto;
+	
+	
+	
+	@Column(name = "data_nascimento", nullable = false)
+	private Date dataNascimento;
+	
+	@OneToOne
+	@JoinColumn(name = "Id")
+	private Time timeCoracao;
+	
+	@Column(name = "email", nullable = false)
 	private String email;
-	private ArrayList<Campanha> campanhas;
+	
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="idCampanha", nullable = true)
+	private List<Campanha> campanhas;
 	
 		
 	public int getIdSocio() {
@@ -20,29 +51,24 @@ public class SocioTorcedor {
 	public void setIdSocio(int idSocio) {
 		this.idSocio = idSocio;
 	}
-	public String getNome() {
-		return Nome;
+	public String getNomeCompleto() {
+		return nomeCompleto;
 	}
-	public void setNome(String nome) {
-		Nome = nome;
+	public void setNome(String nomeCompleto) {
+		this.nomeCompleto = nomeCompleto;
 	}
-	public String getSobrenome() {
-		return Sobrenome;
-	}
-	public void setSobrenome(String sobrenome) {
-		Sobrenome = sobrenome;
-	}
-	public Calendar getDataNascimento() {
+	
+	public Date getDataNascimento() {
 		return dataNascimento;
 	}
-	public void setDataNascimento(Calendar dataNascimento) {
+	public void setDataNascimento(Date dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
-	public int getIdTimeCoracao() {
-		return idTimeCoracao;
+	public Time getTimeCoracao() {
+		return timeCoracao;
 	}
-	public void setIdTimeCoracao(int idTimeCoracao) {
-		this.idTimeCoracao = idTimeCoracao;
+	public void setTimeCoracao(Time timeCoracao) {
+		this.timeCoracao = timeCoracao;
 	}
 	public String getEmail() {
 		return email;
@@ -50,10 +76,10 @@ public class SocioTorcedor {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public ArrayList<Campanha> getCampanhas() {
+	public List<Campanha> getCampanhas() {
 		return campanhas;
 	}
-	public void setCampanhas(ArrayList<Campanha> campanhas) {
+	public void setCampanhas(List<Campanha> campanhas) {
 		this.campanhas = campanhas;
 	}
 
