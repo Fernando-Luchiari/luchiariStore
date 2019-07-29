@@ -1,9 +1,9 @@
 package br.com.luchiari.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
@@ -19,8 +19,13 @@ import org.springframework.stereotype.Component;
 @Entity
 @Component
 @Table(name = "socioTorcedor")
-public class SocioTorcedor {
+public class SocioTorcedor implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2282234407223179143L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int idSocio;
@@ -33,15 +38,15 @@ public class SocioTorcedor {
 	@Column(name = "data_nascimento", nullable = false)
 	private Date dataNascimento;
 	
-	@OneToOne
-	@JoinColumn(name = "Id")
+	@ManyToOne
+	@JoinColumn(name = "idTime")
 	private Time timeCoracao;
 	
 	@Column(name = "email", nullable = false)
 	private String email;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name="idCampanha", nullable = true)
+	@ManyToMany
+	@JoinColumn(name="id_socio", nullable = true)
 	private List<Campanha> campanhas;
 	
 		

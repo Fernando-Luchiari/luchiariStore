@@ -57,9 +57,7 @@ public class Campanha implements Serializable{
 	public void setIdCampanha(long idCampanha) {
 		this.idCampanha = idCampanha;
 	}
-	public long getIdTimeCOracao() {
-		return idTimeCoracao;
-	}
+	
 	public void setIdTimeCOracao(long idTimeCoracao) {
 		this.idTimeCoracao = idTimeCoracao;
 	}

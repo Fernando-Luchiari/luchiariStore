@@ -1,5 +1,7 @@
 package br.com.luchiari.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,8 +14,13 @@ import org.springframework.stereotype.Component;
 @Entity
 @Component
 @Table(name = "time")
-public class Time {
+public class Time  implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2898026923692131943L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public long idTime;
