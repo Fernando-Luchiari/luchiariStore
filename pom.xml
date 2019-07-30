@@ -13,7 +13,6 @@
 	<artifactId>luchiariStore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>luchiariStore</name>
-	<description>Demo project for Spring Boot</description>
 
 	<properties>
 		<java.version>12</java.version>
@@ -50,6 +49,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
