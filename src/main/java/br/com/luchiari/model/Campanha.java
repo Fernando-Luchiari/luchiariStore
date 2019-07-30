@@ -1,6 +1,8 @@
 package br.com.luchiari.model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -50,7 +52,23 @@ public class Campanha implements Serializable{
 	@Column(name = "data_criacao", nullable = true)
 	private Date dataCriacao;
 	
+	public Campanha() {}
 	
+	
+	
+	public Campanha(long idCampanha, String nomeCampanha, long idTimeCoracao, String inicioVigencia, String fimVigencia,
+			String dataCriacao) {
+		super();
+		this.idCampanha = idCampanha;
+		this.nomeCampanha = nomeCampanha;
+		this.idTimeCoracao = idTimeCoracao;
+		this.inicioVigencia = converteData(inicioVigencia);
+		this.fimVigencia = converteData(fimVigencia);
+		this.dataCriacao = converteData(dataCriacao);
+	}
+
+
+
 	public long getIdCampanha() {
 		return idCampanha;
 	}
@@ -93,6 +111,19 @@ public class Campanha implements Serializable{
 	}
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
+	}
+	
+	public Date converteData(String data) {
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		Date novaData = new Date();
+		try {
+			novaData = formato.parse(data);
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return novaData;
+		
 	}
 	
 }

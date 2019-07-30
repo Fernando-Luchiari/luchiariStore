@@ -10,8 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
@@ -45,7 +45,7 @@ public class SocioTorcedor implements Serializable{
 	@Column(name = "email", nullable = false)
 	private String email;
 	
-	@ManyToMany
+	@OneToMany
 	@JoinColumn(name="id_socio", nullable = true)
 	private List<Campanha> campanhas;
 	
