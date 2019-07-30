@@ -38,7 +38,7 @@ public class CampanhaService {
 
 	}
 
-	public CampanhaDTO buscar(long id) throws Exception {
+	public CampanhaDTO buscar(long id) {
 		Campanha campanha = campanhaRepository.findById(id).isEmpty() ? null : campanhaRepository.findById(id).get();
 		CampanhaDTO campanhaDto = null;
 		if (campanha != null) {
