@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.luchiari.dto.CampanhaDto;
+import br.com.luchiari.dto.CampanhaDTO;
 import br.com.luchiari.model.Campanha;
 import br.com.luchiari.repositories.CampanhaRepository;
 
@@ -17,7 +17,7 @@ public class CampanhaService {
 	@Autowired
 	private CampanhaRepository campanhaRepository;
 
-	public CampanhaDto salvar(CampanhaDto campanhaDto) {
+	public CampanhaDTO salvar(CampanhaDTO campanhaDto) {
 		Campanha campanha = new Campanha();
 		campanha.setNomeCampanha(campanhaDto.getNomeCampanha());
 		campanha.setInicioVigencia(campanhaDto.converteInicioVigencia());
@@ -29,20 +29,20 @@ public class CampanhaService {
 		return campanhaDto;
 	}
 
-	public List<CampanhaDto> listarCampanhas() {
-		List<CampanhaDto> responseCampanha = new ArrayList<CampanhaDto>();
+	public List<CampanhaDTO> listarCampanhas() {
+		List<CampanhaDTO> responseCampanha = new ArrayList<CampanhaDTO>();
 		campanhaRepository.findAllByFimVigenciaGreaterThanEqual(new Date())
-				.forEach(campanha -> responseCampanha.add(new CampanhaDto(campanha.getNomeCampanha(),
+				.forEach(campanha -> responseCampanha.add(new CampanhaDTO(campanha.getNomeCampanha(),
 						campanha.getIdTimeCoracao(), campanha.getInicioVigencia(), campanha.getFimVigencia())));
 		return responseCampanha;
 
 	}
 
-	public CampanhaDto buscar(long id) throws Exception {
+	public CampanhaDTO buscar(long id) throws Exception {
 		Campanha campanha = campanhaRepository.findById(id).isEmpty() ? null : campanhaRepository.findById(id).get();
-		CampanhaDto campanhaDto = null;
+		CampanhaDTO campanhaDto = null;
 		if (campanha != null) {
-			campanhaDto = new CampanhaDto(campanhaRepository.findById(id).get().getNomeCampanha(),
+			campanhaDto = new CampanhaDTO(campanhaRepository.findById(id).get().getNomeCampanha(),
 					campanhaRepository.findById(id).get().getIdTimeCoracao(),
 					campanhaRepository.findById(id).get().getInicioVigencia(),
 					campanhaRepository.findById(id).get().getFimVigencia());
@@ -55,20 +55,20 @@ public class CampanhaService {
 		return campanhas;
 	}
 
-	public List<CampanhaDto> apagarCampanha(long idCampanha) {
+	public List<CampanhaDTO> apagarCampanha(long idCampanha) {
 		try {
 			campanhaRepository.deleteById(idCampanha);
 		} catch (Exception e) {
 			return null;
 		}
-		List<CampanhaDto> responseCampanha = new ArrayList<CampanhaDto>();
+		List<CampanhaDTO> responseCampanha = new ArrayList<CampanhaDTO>();
 		campanhaRepository.findAllByFimVigenciaGreaterThanEqual(new Date())
-				.forEach(campanha -> responseCampanha.add(new CampanhaDto(campanha.getNomeCampanha(),
+				.forEach(campanha -> responseCampanha.add(new CampanhaDTO(campanha.getNomeCampanha(),
 						campanha.getIdTimeCoracao(), campanha.getInicioVigencia(), campanha.getFimVigencia())));
 		return responseCampanha;
 	}
 
-	public CampanhaDto alterar(CampanhaDto campanhaDto, long idCampanha) {
+	public CampanhaDTO alterar(CampanhaDTO campanhaDto, long idCampanha) {
 		Campanha campanhaAlterada = campanhaRepository.findById(idCampanha).isEmpty() ? null
 				: campanhaRepository.findById(idCampanha).get();
 
@@ -83,7 +83,7 @@ public class CampanhaService {
 		return null;
 	}
 
-	public void reorganizaVigencia(CampanhaDto novaCampanha) {
+	public void reorganizaVigencia(CampanhaDTO novaCampanha) {
 
 		Calendar c = Calendar.getInstance();
 		c.setTime(novaCampanha.converteFimVigencia());

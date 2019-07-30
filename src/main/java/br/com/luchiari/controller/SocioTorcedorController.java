@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.luchiari.dto.SocioTorcedorDto;
+import br.com.luchiari.dto.SocioTorcedorDTO;
 import br.com.luchiari.model.SocioTorcedor;
 import br.com.luchiari.response.Response;
 import br.com.luchiari.service.SocioTorcedorService;
@@ -26,12 +26,12 @@ public class SocioTorcedorController {
 	
 	@PostMapping("/socioTorcedor")
 	@ResponseBody
-	public ResponseEntity<Response<SocioTorcedorDto>> createSocioTorcedor(@Valid @RequestBody SocioTorcedorDto socioTorcedor,
+	public ResponseEntity<Response<SocioTorcedorDTO>> createSocioTorcedor(@Valid @RequestBody SocioTorcedorDTO socioTorcedor,
 			BindingResult result){
 		
 		SocioTorcedor validaSocio = socioTorcedorService.validaEmail(socioTorcedor);
 		
-		Response<SocioTorcedorDto> response = new Response<SocioTorcedorDto>();
+		Response<SocioTorcedorDTO> response = new Response<SocioTorcedorDTO>();
 		if (result.hasErrors()) {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);

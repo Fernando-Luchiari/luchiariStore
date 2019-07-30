@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.luchiari.dto.CampanhaDto;
+import br.com.luchiari.dto.CampanhaDTO;
 import br.com.luchiari.model.Campanha;
 import br.com.luchiari.response.Response;
 import br.com.luchiari.service.CampanhaService;
@@ -33,25 +33,25 @@ public class CampanhasController {
 
 	@GetMapping("/campanhas")
 	@ResponseBody
-	public List<CampanhaDto> getCampanha() {
+	public List<CampanhaDTO> getCampanha() {
 		return campanhaService.listarCampanhas();
 	}
 
 	@GetMapping("/campanhas/{id}")
 	@ResponseBody
-	public ResponseEntity<Response<CampanhaDto>> getCampanha(@PathVariable(value = "id") long id) throws Exception {
-		CampanhaDto campanhaDto = campanhaService.buscar(id);		
-		Response<CampanhaDto> response = new Response<CampanhaDto>();
+	public ResponseEntity<Response<CampanhaDTO>> getCampanha(@PathVariable(value = "id") long id) throws Exception {
+		CampanhaDTO campanhaDto = campanhaService.buscar(id);		
+		Response<CampanhaDTO> response = new Response<CampanhaDTO>();
 		response.setData(campanhaDto);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@PostMapping("/campanhas")
 	@ResponseBody
-	public ResponseEntity<Response<CampanhaDto>> createCampanha(@Valid @RequestBody CampanhaDto campanhaDto,
+	public ResponseEntity<Response<CampanhaDTO>> createCampanha(@Valid @RequestBody CampanhaDTO campanhaDto,
 			BindingResult result) {
 
-		Response<CampanhaDto> response = new Response<CampanhaDto>();
+		Response<CampanhaDTO> response = new Response<CampanhaDTO>();
 		if (result.hasErrors()) {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
@@ -63,17 +63,17 @@ public class CampanhasController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		CampanhaDto novaCampanhaDto = campanhaService.salvar(campanhaDto);
+		CampanhaDTO novaCampanhaDto = campanhaService.salvar(campanhaDto);
 		response.setData(novaCampanhaDto);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 	}
 
 	@DeleteMapping("/campanhas/{id}")
-	public ResponseEntity<Response<List<CampanhaDto>>> deleteCampanha(@PathVariable(value = "id") int idCampanha) {
+	public ResponseEntity<Response<List<CampanhaDTO>>> deleteCampanha(@PathVariable(value = "id") int idCampanha) {
 
-		Response<List<CampanhaDto>> response = new Response<List<CampanhaDto>>();
-		List<CampanhaDto> campanhas = campanhaService.apagarCampanha(idCampanha);
+		Response<List<CampanhaDTO>> response = new Response<List<CampanhaDTO>>();
+		List<CampanhaDTO> campanhas = campanhaService.apagarCampanha(idCampanha);
 
 		if(campanhas == null) {
 			response.getErrors().add("Nenhuma campanha com esse id foi encontrada");
@@ -86,10 +86,10 @@ public class CampanhasController {
 	}
 
 	@PutMapping("/campanhas/{id}")
-	public ResponseEntity<Response<CampanhaDto>> updateCampanha(@PathVariable(value = "id") Long idCampanha,
-			@Valid @RequestBody CampanhaDto campanhaDto, BindingResult result) {
+	public ResponseEntity<Response<CampanhaDTO>> updateCampanha(@PathVariable(value = "id") Long idCampanha,
+			@Valid @RequestBody CampanhaDTO campanhaDto, BindingResult result) {
 
-		Response<CampanhaDto> response = new Response<CampanhaDto>();
+		Response<CampanhaDTO> response = new Response<CampanhaDTO>();
 
 		if (result.hasErrors()) {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
@@ -102,7 +102,7 @@ public class CampanhasController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		CampanhaDto novaCampanha = campanhaService.alterar(campanhaDto, idCampanha);
+		CampanhaDTO novaCampanha = campanhaService.alterar(campanhaDto, idCampanha);
 		if(novaCampanha == null) {
 			response.getErrors().add("Nenhuma campanha com esse id foi encontrada");
 			return ResponseEntity.badRequest().body(response);

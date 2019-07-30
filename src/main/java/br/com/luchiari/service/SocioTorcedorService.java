@@ -12,8 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import br.com.luchiari.dto.CampanhaDto;
-import br.com.luchiari.dto.SocioTorcedorDto;
+import br.com.luchiari.dto.SocioTorcedorDTO;
 import br.com.luchiari.model.Campanha;
 import br.com.luchiari.model.SocioTorcedor;
 import br.com.luchiari.model.Time;
@@ -30,7 +29,7 @@ public class SocioTorcedorService {
 	@Autowired
 	private ObjectMapper mapper;
 
-	public SocioTorcedorDto salvar(SocioTorcedorDto socioTorcedorDto) {
+	public SocioTorcedorDTO salvar(SocioTorcedorDTO socioTorcedorDto) {
 		SocioTorcedor socioTorcedor = new SocioTorcedor();
 
 		socioTorcedor.setNome(socioTorcedorDto.getNomeCompleto());
@@ -59,7 +58,7 @@ public class SocioTorcedorService {
 		return socioTorcedorDto;
 	}
 
-	public SocioTorcedor validaEmail(SocioTorcedorDto socioTorcedorDto) {
+	public SocioTorcedor validaEmail(SocioTorcedorDTO socioTorcedorDto) {
 		return socioTorcedorRepository.findAllByEmailEquals(socioTorcedorDto.getEmail());
 
 	}

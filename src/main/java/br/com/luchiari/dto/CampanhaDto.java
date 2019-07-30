@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-public class CampanhaDto {
+public class CampanhaDTO {
 	
 	
 	private String nomeCampanha;
@@ -18,11 +18,11 @@ public class CampanhaDto {
 	
 	private String vigencia;
 	
-	public CampanhaDto() {
+	public CampanhaDTO() {
 		
 	}
 	
-	public CampanhaDto(String nomeCampanha, long idTimeCOracao, Date inicioVigencia, Date fimVigencia) {
+	public CampanhaDTO(String nomeCampanha, long idTimeCOracao, Date inicioVigencia, Date fimVigencia) {
 		this.nomeCampanha = nomeCampanha;
 		this.idTimeCoracao = idTimeCOracao;
 		setVigencia(inicioVigencia, fimVigencia);
